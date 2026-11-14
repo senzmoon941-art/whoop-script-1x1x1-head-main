@@ -1,0 +1,831 @@
+-- ============================================================
+-- WHOOP SCRIPT - ULTIMATE UI (UPDATED & FIXED)
+-- Theme: Black & White Minimalist Premium
+-- Owner: Ucenucunacan13
+-- ============================================================
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local CoreGui = game:GetService("CoreGui")
+local Workspace = game:GetService("Workspace")
+local TextChatService = game:GetService("TextChatService")
+local StarterGui = game:GetService("StarterGui")
+
+local LocalPlayer = Players.LocalPlayer
+local OWNER_NAME = "Ucenucunacan13"
+
+-- Clean up Old UI
+if CoreGui:FindFirstChild("WhoopHubUI") then
+CoreGui.WhoopHubUI:Destroy()
+end
+
+-- Notification System
+local function sendChatNotification(msg)
+pcall(function()
+if TextChatService and TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+local textChannel = TextChatService.TextChannels.RBXGeneral
+if textChannel then
+textChannel:SendAsync(msg)
+end
+else
+StarterGui:SetCore("ChatMakeSystemMessage", {
+Text = msg,
+Color = Color3.fromRGB(255, 255, 255),
+Font = Enum.Font.SourceSansBold,
+FontSize = Enum.FontSize.Size18
+})
+end
+end)
+end
+
+sendChatNotification("SCRIPT WHOOP BETA")
+
+local function notifyToggle(featureName, state)
+local stateText = state and "ACTIVATED" or "DEACTIVATED"
+sendChatNotification("RESPECTFUL; " .. featureName .. " is " .. stateText)
+end
+
+-- ============================================================
+-- GLOBAL VARIABLES & UTILITIES
+-- ============================================================
+local lastDeathPosition = nil
+
+LocalPlayer.CharacterAdded:Connect(function(char)
+local hum = char:WaitForChild("Humanoid", 5)
+if hum then
+hum.Died:Connect(function()
+local hrp = char:FindFirstChild("HumanoidRootPart")
+if hrp then
+lastDeathPosition = hrp.CFrame
+end
+end)
+end
+end)
+
+local function isOwnerOnline()
+for _, player in ipairs(Players:GetPlayers()) do
+if player.Name == OWNER_NAME or player.DisplayName == OWNER_NAME then
+return true
+end
+end
+return false
+end
+
+-- ============================================================
+-- MAIN UI CREATION
+-- ============================================================
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "WhoopHubUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = CoreGui
+
+local OpenCloseBtn = Instance.new("TextButton")
+OpenCloseBtn.Name = "OpenCloseToggle"
+OpenCloseBtn.Size = UDim2.new(0, 50, 0, 50)
+OpenCloseBtn.Position = UDim2.new(0.02, 0, 0.5, -25)
+OpenCloseBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+OpenCloseBtn.Text = "⚡"
+OpenCloseBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+OpenCloseBtn.TextSize = 26
+OpenCloseBtn.Font = Enum.Font.GothamBold
+OpenCloseBtn.Active = true
+OpenCloseBtn.Draggable = true
+OpenCloseBtn.Parent = ScreenGui
+
+local OpenBtnCorner = Instance.new("UICorner")
+OpenBtnCorner.CornerRadius = UDim.new(1, 0)
+OpenBtnCorner.Parent = OpenCloseBtn
+
+local OpenBtnStroke = Instance.new("UIStroke")
+OpenBtnStroke.Color = Color3.fromRGB(0, 0, 0)
+OpenBtnStroke.Thickness = 2
+OpenBtnStroke.Parent = OpenCloseBtn
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 620, 0, 420)
+MainFrame.Position = UDim2.new(0.5, -310, 0.5, -210)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
+
+OpenCloseBtn.MouseButton1Click:Connect(function()
+MainFrame.Visible = not MainFrame.Visible
+end)
+
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 8)
+MainCorner.Parent = MainFrame
+
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Color = Color3.fromRGB(255, 255, 255)
+MainStroke.Thickness = 1.5
+MainStroke.Parent = MainFrame
+
+-- Top Bar Header
+local TopBar = Instance.new("Frame")
+TopBar.Size = UDim2.new(1, 0, 0, 40)
+TopBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+TopBar.BorderSizePixel = 0
+TopBar.Parent = MainFrame
+
+local TopBarCorner = Instance.new("UICorner")
+TopBarCorner.CornerRadius = UDim.new(0, 8)
+TopBarCorner.Parent = TopBar
+
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Size = UDim2.new(0, 200, 1, 0)
+TitleLabel.Position = UDim2.new(0, 15, 0, 0)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Text = "WHOOP HUB"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.TextSize = 18
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+TitleLabel.Parent = TopBar
+
+local OwnerStatusLabel = Instance.new("TextLabel")
+OwnerStatusLabel.Size = UDim2.new(0, 300, 1, 0)
+OwnerStatusLabel.Position = UDim2.new(1, -315, 0, 0)
+OwnerStatusLabel.BackgroundTransparency = 1
+OwnerStatusLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+OwnerStatusLabel.TextSize = 13
+OwnerStatusLabel.Font = Enum.Font.GothamBold
+OwnerStatusLabel.TextXAlignment = Enum.TextXAlignment.Right
+OwnerStatusLabel.Parent = TopBar
+
+if isOwnerOnline() then
+OwnerStatusLabel.Text = "OWNER IS ONLINE 👑 " .. OWNER_NAME
+else
+OwnerStatusLabel.Text = "OWNER: " .. OWNER_NAME .. " (Offline)"
+end
+
+-- Sidebar Navigation
+local Sidebar = Instance.new("Frame")
+Sidebar.Size = UDim2.new(0, 150, 1, -45)
+Sidebar.Position = UDim2.new(0, 5, 0, 42)
+Sidebar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Sidebar.BorderSizePixel = 0
+Sidebar.Parent = MainFrame
+
+local SidebarCorner = Instance.new("UICorner")
+SidebarCorner.CornerRadius = UDim.new(0, 6)
+SidebarCorner.Parent = Sidebar
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Padding = UDim.new(0, 5)
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Parent = Sidebar
+
+-- Content Display Area
+local ContentArea = Instance.new("Frame")
+ContentArea.Size = UDim2.new(1, -165, 1, -45)
+ContentArea.Position = UDim2.new(0, 160, 0, 42)
+ContentArea.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
+ContentArea.BorderSizePixel = 0
+ContentArea.Parent = MainFrame
+
+local ContentCorner = Instance.new("UICorner")
+ContentCorner.CornerRadius = UDim.new(0, 6)
+ContentCorner.Parent = ContentArea
+
+-- Tabs Container
+local Tabs = {}
+local function createTab(tabName, layoutOrder)
+local TabButton = Instance.new("TextButton")
+TabButton.Size = UDim2.new(1, 0, 0, 35)
+TabButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TabButton.Text = " " .. tabName
+TabButton.TextColor3 = Color3.fromRGB(200, 200, 200)
+TabButton.TextSize = 13
+TabButton.Font = Enum.Font.GothamMedium
+TabButton.TextXAlignment = Enum.TextXAlignment.Left
+TabButton.LayoutOrder = layoutOrder
+TabButton.Parent = Sidebar
+
+local BtnCorner = Instance.new("UICorner")  
+BtnCorner.CornerRadius = UDim.new(0, 4)  
+BtnCorner.Parent = TabButton  
+
+local TabPage = Instance.new("ScrollingFrame")  
+TabPage.Size = UDim2.new(1, -10, 1, -10)  
+TabPage.Position = UDim2.new(0, 5, 0, 5)  
+TabPage.BackgroundTransparency = 1  
+TabPage.BorderSizePixel = 0  
+TabPage.Visible = false  
+TabPage.CanvasSize = UDim2.new(0, 0, 2.5, 0)  
+TabPage.ScrollBarThickness = 4  
+TabPage.Parent = ContentArea  
+
+local PageList = Instance.new("UIListLayout")  
+PageList.Padding = UDim.new(0, 8)  
+PageList.SortOrder = Enum.SortOrder.LayoutOrder  
+PageList.Parent = TabPage  
+
+TabButton.MouseButton1Click:Connect(function()  
+    for _, tabData in pairs(Tabs) do  
+        tabData.Page.Visible = false  
+        tabData.Button.BackgroundColor3 = Color3.fromRGB(30, 30, 30)  
+        tabData.Button.TextColor3 = Color3.fromRGB(200, 200, 200)  
+    end  
+    TabPage.Visible = true  
+    TabButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  
+    TabButton.TextColor3 = Color3.fromRGB(0, 0, 0)  
+end)  
+
+Tabs[tabName] = {Button = TabButton, Page = TabPage}  
+return TabPage
+
+end
+
+-- Create Tabs
+local TabPlayerInfo = createTab("👤 Player Info", 1)
+local TabCombat = createTab("⚔️ Combat", 2)
+local TabAutoEat = createTab("🥩 Auto Fast Eat", 3)
+local TabUtility = createTab("🏃 Utilities & Speed", 4)
+
+Tabs["👤 Player Info"].Page.Visible = true
+Tabs["👤 Player Info"].Button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Tabs["👤 Player Info"].Button.TextColor3 = Color3.fromRGB(0, 0, 0)
+
+-- Helper: UI Toggle Creator
+local function createToggle(parentPage, text, callback)
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(1, -10, 0, 40)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.Parent = parentPage
+
+local Corner = Instance.new("UICorner")  
+Corner.CornerRadius = UDim.new(0, 6)  
+Corner.Parent = Frame  
+
+local Label = Instance.new("TextLabel")  
+Label.Size = UDim2.new(0.7, 0, 1, 0)  
+Label.Position = UDim2.new(0, 10, 0, 0)  
+Label.BackgroundTransparency = 1  
+Label.Text = text  
+Label.TextColor3 = Color3.fromRGB(240, 240, 240)  
+Label.TextSize = 13  
+Label.Font = Enum.Font.GothamMedium  
+Label.TextXAlignment = Enum.TextXAlignment.Left  
+Label.Parent = Frame  
+
+local ToggleBtn = Instance.new("TextButton")  
+ToggleBtn.Size = UDim2.new(0, 50, 0, 24)  
+ToggleBtn.Position = UDim2.new(1, -60, 0.5, -12)  
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  
+ToggleBtn.Text = "OFF"  
+ToggleBtn.TextColor3 = Color3.fromRGB(200, 200, 200)  
+ToggleBtn.Font = Enum.Font.GothamBold  
+ToggleBtn.TextSize = 11  
+ToggleBtn.Parent = Frame  
+
+local BtnCorner = Instance.new("UICorner")  
+BtnCorner.CornerRadius = UDim.new(0, 12)  
+BtnCorner.Parent = ToggleBtn  
+
+local state = false  
+ToggleBtn.MouseButton1Click:Connect(function()  
+    state = not state  
+    if state then  
+        ToggleBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  
+        ToggleBtn.TextColor3 = Color3.fromRGB(0, 0, 0)  
+        ToggleBtn.Text = "ON"  
+    else  
+        ToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  
+        ToggleBtn.TextColor3 = Color3.fromRGB(200, 200, 200)  
+        ToggleBtn.Text = "OFF"  
+    end  
+    callback(state)  
+end)
+
+end
+
+-- ============================================================
+-- TAB 1: PLAYER INFO & OWNER BANNER
+-- ============================================================
+local ProfileCard = Instance.new("Frame")
+ProfileCard.Size = UDim2.new(1, -10, 0, 110)
+ProfileCard.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ProfileCard.Parent = TabPlayerInfo
+
+local CardCorner = Instance.new("UICorner")
+CardCorner.CornerRadius = UDim.new(0, 6)
+CardCorner.Parent = ProfileCard
+
+local AvatarImg = Instance.new("ImageLabel")
+AvatarImg.Size = UDim2.new(0, 80, 0, 80)
+AvatarImg.Position = UDim2.new(0, 15, 0.5, -40)
+AvatarImg.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+AvatarImg.Parent = ProfileCard
+
+local ImgCorner = Instance.new("UICorner")
+ImgCorner.CornerRadius = UDim.new(1, 0)
+ImgCorner.Parent = AvatarImg
+
+pcall(function()
+local content = Players:GetUserThumbnailAsync(
+LocalPlayer.UserId,
+Enum.ThumbnailType.HeadShot,
+Enum.ThumbnailSize.Size100x100
+)
+AvatarImg.Image = content
+end)
+
+local UserDetails = Instance.new("TextLabel")
+UserDetails.Size = UDim2.new(1, -110, 1, 0)
+UserDetails.Position = UDim2.new(0, 105, 0, 0)
+UserDetails.BackgroundTransparency = 1
+UserDetails.TextColor3 = Color3.fromRGB(255, 255, 255)
+UserDetails.TextSize = 13
+UserDetails.Font = Enum.Font.GothamMedium
+UserDetails.TextXAlignment = Enum.TextXAlignment.Left
+UserDetails.Text = "Name: " .. LocalPlayer.DisplayName .. " (@" .. LocalPlayer.Name .. ")\nRoblox ID: " .. LocalPlayer.UserId .. "\nAccount Age: " .. LocalPlayer.AccountAge .. " Days"
+UserDetails.Parent = ProfileCard
+
+local Banner = Instance.new("Frame")
+Banner.Size = UDim2.new(1, -10, 0, 50)
+Banner.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Banner.Parent = TabPlayerInfo
+
+local BannerCorner = Instance.new("UICorner")
+BannerCorner.CornerRadius = UDim.new(0, 6)
+BannerCorner.Parent = Banner
+
+local BannerText = Instance.new("TextLabel")
+BannerText.Size = UDim2.new(1, 0, 1, 0)
+BannerText.BackgroundTransparency = 1
+BannerText.Text = "👑 CREATED BY OWNER: " .. OWNER_NAME
+BannerText.TextColor3 = Color3.fromRGB(0, 0, 0)
+BannerText.TextSize = 14
+BannerText.Font = Enum.Font.GothamBold
+BannerText.Parent = Banner
+
+-- ============================================================
+-- TAB 2: COMBAT (KILL AURA, LAG MACHINE & GOD MODE)
+-- ============================================================
+local killAuraEnabled = false
+local lagMachineEnabled = false
+local godModeEnabled = false
+
+local function nullifyRemote(networkFolder, remoteName)
+local realRemote = networkFolder:FindFirstChild(remoteName)
+if realRemote then
+local dummy = Instance.new("RemoteEvent")
+dummy.Name = remoteName
+dummy.Parent = networkFolder
+realRemote:Destroy()
+end
+end
+
+RunService.Heartbeat:Connect(function()
+if godModeEnabled then
+local char = LocalPlayer.Character
+if char and char:FindFirstChild("Humanoid") then
+local hum = char.Humanoid
+if hum.Health < hum.MaxHealth then
+hum.Health = hum.MaxHealth
+end
+end
+end
+
+local char = LocalPlayer.Character  
+if not char then return end  
+local hrp = char:FindFirstChild("HumanoidRootPart")  
+if not hrp then return end  
+
+local function findCombatRemote()  
+    local possiblePaths = {  
+        ReplicatedStorage:FindFirstChild("Systems") and ReplicatedStorage.Systems:FindFirstChild("ActionsSystem") and ReplicatedStorage.Systems.ActionsSystem.Network:FindFirstChild("Attack"),  
+        ReplicatedStorage:FindFirstChild("Systems") and ReplicatedStorage.Systems:FindFirstChild("Combat") and ReplicatedStorage.Systems.Combat:FindFirstChild("Attack"),  
+        ReplicatedStorage:FindFirstChild("Combat") and ReplicatedStorage.Combat:FindFirstChild("Attack"),  
+        ReplicatedStorage:FindFirstChild("Attack")  
+    }  
+    for _, remote in ipairs(possiblePaths) do  
+        if remote and (remote:IsA("RemoteEvent") or remote:IsA("RemoteFunction")) then  
+            return remote  
+        end  
+    end  
+    return nil  
+end  
+
+local CombatRemote = findCombatRemote()  
+
+for _, targetPlayer in ipairs(Players:GetPlayers()) do  
+    if targetPlayer ~= LocalPlayer and targetPlayer.Character then  
+        local targetHrp = targetPlayer.Character:FindFirstChild("HumanoidRootPart")  
+        local targetHum = targetPlayer.Character:FindFirstChild("Humanoid")  
+          
+        if targetHrp and targetHum and targetHum.Health > 0 then  
+            local dist = (targetHrp.Position - hrp.Position).Magnitude  
+            if dist <= 75 then  
+                if killAuraEnabled and CombatRemote then  
+                    pcall(function()  
+                        if CombatRemote:IsA("RemoteEvent") then  
+                            CombatRemote:FireServer(targetPlayer.Character, 1)  
+                        else  
+                            CombatRemote:InvokeServer(targetPlayer.Character, 1)  
+                        end  
+                    end)  
+                end  
+
+                if lagMachineEnabled and CombatRemote then  
+                    pcall(function()  
+                        for i = 1, 15 do  
+                            if CombatRemote:IsA("RemoteEvent") then  
+                                CombatRemote:FireServer(targetPlayer.Character, 999999)  
+                            else  
+                                CombatRemote:InvokeServer(targetPlayer.Character, 999999)  
+                            end  
+                        end  
+                    end)  
+                end  
+            end  
+        end  
+    end  
+end
+
+end)
+
+createToggle(TabCombat, "WHOOP 1 SHOT (Kill Aura 75m)", function(state)
+killAuraEnabled = state
+notifyToggle("WHOOP 1 SHOT", state)
+end)
+
+createToggle(TabCombat, "⚡ LAG MACHINE (Freeze Target)", function(state)
+lagMachineEnabled = state
+notifyToggle("LAG MACHINE", state)
+end)
+
+createToggle(TabCombat, "🛡️ GOD MODE (Voxel / No Fall/Lava)", function(state)
+godModeEnabled = state
+if state then
+pcall(function()
+local netFolder = ReplicatedStorage:WaitForChild("Systems"):WaitForChild("CombatSystem"):WaitForChild("Network")
+nullifyRemote(netFolder, "FallDamage")
+nullifyRemote(netFolder, "DrownDamage")
+nullifyRemote(netFolder, "EnteredLava")
+end)
+end
+notifyToggle("GOD MODE", state)
+end)
+
+-- ============================================================
+-- TAB 3: AUTO FAST EAT
+-- ============================================================
+local autoEatEnabled = false
+local function GetConsumeRemote()
+local success, remote = pcall(function()
+return ReplicatedStorage:WaitForChild("Systems", 3)
+:WaitForChild("ActionsSystem", 3)
+:WaitForChild("Network", 3)
+:WaitForChild("Consume", 3)
+end)
+return success and remote or nil
+end
+
+local ConsumeRemote = GetConsumeRemote()
+
+task.spawn(function()
+local slotIndex = 1
+while true do
+task.wait(0.1)
+if autoEatEnabled and ConsumeRemote and LocalPlayer.Character then
+for i = 1, 6 do
+local currentSlot = slotIndex
+task.defer(function()
+pcall(function()
+ConsumeRemote:InvokeServer(currentSlot)
+end)
+end)
+slotIndex = slotIndex + 1
+if slotIndex > 36 then
+slotIndex = 1
+end
+end
+end
+end
+end)
+
+createToggle(TabAutoEat, "WHOOP SCRIPT AUTO FAST EAT", function(state)
+autoEatEnabled = state
+notifyToggle("WHOOP SCRIPT AUTO FAST EAT", state)
+end)
+
+-- ============================================================
+-- TAB 4: UTILITIES, SPEED MOD & TELEPORTS (Z-FLY INTEGRATED)
+-- ============================================================
+
+-- ==================== Z-FLY INTEGRATION ====================
+local zFlyFlying = false
+local moveForward, moveBackward, moveLeft, moveRight = false, false, false, false
+local zFlyBodyVelocity, zFlyBodyGyro
+
+-- Z-Fly Remote D-Pad Frame (Default Hidden)
+local remoteFrame = Instance.new("Frame")
+remoteFrame.Name = "ZFlyRemoteFrame"
+remoteFrame.Size = UDim2.new(0, 140, 0, 140)
+remoteFrame.Position = UDim2.new(0.05, 0, 0.4, 0)
+remoteFrame.BackgroundTransparency = 0.5
+remoteFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+remoteFrame.BorderSizePixel = 0
+remoteFrame.Active = true
+remoteFrame.Draggable = true
+remoteFrame.Visible = false -- Off state by default
+remoteFrame.Parent = ScreenGui
+
+local remoteCorner = Instance.new("UICorner")
+remoteCorner.CornerRadius = UDim.new(0, 10)
+remoteCorner.Parent = remoteFrame
+
+local function createDpadButton(name, size, pos, text)
+local btn = Instance.new("TextButton")
+btn.Name = name
+btn.Size = size
+btn.Position = pos
+btn.BackgroundColor3 = Color3.fromRGB(60, 60, 65)
+btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+btn.Text = text
+btn.TextSize = 14
+btn.Font = Enum.Font.SourceSansBold
+btn.Parent = remoteFrame
+local c = Instance.new("UICorner")
+c.CornerRadius = UDim.new(0, 4)
+c.Parent = btn
+return btn
+end
+
+local btnUp = createDpadButton("Up", UDim2.new(0, 40, 0, 40), UDim2.new(0.5, -20, 0.05, 0), "^")
+local btnDown = createDpadButton("Down", UDim2.new(0, 40, 0, 40), UDim2.new(0.5, -20, 0.60, 0), "v")
+local btnLeft = createDpadButton("Left", UDim2.new(0, 40,         SpeedToggleBtn.Text = "OFF"
+if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = 16
+end
+end
+notifyToggle("Speed Hack", speedEnabled)
+end)
+
+-- Speed Controls (+ / - Buttons)
+local BtnMinus = Instance.new("TextButton")
+BtnMinus.Size = UDim2.new(0, 40, 0, 24)
+BtnMinus.Position = UDim2.new(0, 10, 0, 38)
+BtnMinus.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+BtnMinus.Text = "-10"
+BtnMinus.TextColor3 = Color3.fromRGB(255, 255, 255)
+BtnMinus.Font = Enum.Font.GothamBold
+BtnMinus.Parent = SpeedFrame
+Instance.new("UICorner", BtnMinus).CornerRadius = UDim.new(0, 4)
+
+local BtnPlus = Instance.new("TextButton")
+BtnPlus.Size = UDim2.new(0, 40, 0, 24)
+BtnPlus.Position = UDim2.new(0, 60, 0, 38)
+BtnPlus.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+BtnPlus.Text = "+10"
+BtnPlus.TextColor3 = Color3.fromRGB(255, 255, 255)
+BtnPlus.Font = Enum.Font.GothamBold
+BtnPlus.Parent = SpeedFrame
+Instance.new("UICorner", BtnPlus).CornerRadius = UDim.new(0, 4)
+
+local BtnMax = Instance.new("TextButton")
+BtnMax.Size = UDim2.new(0, 80, 0, 24)
+BtnMax.Position = UDim2.new(0, 110, 0, 38)
+BtnMax.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+BtnMax.Text = "Set 100"
+BtnMax.TextColor3 = Color3.fromRGB(255, 255, 255)
+BtnMax.Font = Enum.Font.GothamBold
+BtnMax.Parent = SpeedFrame
+Instance.new("UICorner", BtnMax).CornerRadius = UDim.new(0, 4)
+
+BtnMinus.MouseButton1Click:Connect(function()
+    targetSpeed = math.max(16, targetSpeed - 10)
+    SpeedLabel.Text = "⚡ WalkSpeed: " .. tostring(targetSpeed)
+end)
+
+BtnPlus.MouseButton1Click:Connect(function()
+    targetSpeed = targetSpeed + 10
+    SpeedLabel.Text = "⚡ WalkSpeed: " .. tostring(targetSpeed)
+end)
+
+BtnMax.MouseButton1Click:Connect(function()
+    targetSpeed = 100
+    SpeedLabel.Text = "⚡ WalkSpeed: " .. tostring(targetSpeed)
+end)
+
+RunService.RenderStepped:Connect(function()
+    if speedEnabled and LocalPlayer.Character then
+        local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum then
+            hum.WalkSpeed = targetSpeed
+        end
+    end
+end)
+
+-- 2. NOCLIP
+local noclipEnabled = false
+RunService.Stepped:Connect(function()
+    if noclipEnabled and LocalPlayer.Character then
+        for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
+            if part:IsA("BasePart") and part.CanCollide then
+                part.CanCollide = false
+            end
+        end
+    end
+end)
+
+createToggle(TabUtility, "Noclip", function(state)
+    noclipEnabled = state
+    notifyToggle("Noclip", state)
+end)
+
+-- 3. PLAYER ESP (FIXED: EXCLUDE LOCAL PLAYER & SHOW HP)
+local espEnabled = false
+
+local function addESP(player)
+    if player == LocalPlayer then return end
+    
+    local function applyHighlight(char)
+        if not espEnabled or not char then return end
+        if not char:FindFirstChild("WhoopESP") then
+            local highlight = Instance.new("Highlight")
+            highlight.Name = "WhoopESP"
+            highlight.FillColor = Color3.fromRGB(255, 255, 255)
+            highlight.OutlineColor = Color3.fromRGB(0, 0, 0)
+            highlight.Parent = char
+        end
+
+        local hrp = char:WaitForChild("HumanoidRootPart", 5)
+        local hum = char:WaitForChild("Humanoid", 5)
+        if hrp and hum and not hrp:FindFirstChild("WhoopHealthTag") then
+            local bb = Instance.new("BillboardGui")
+            bb.Name = "WhoopHealthTag"
+            bb.Size = UDim2.new(0, 100, 0, 30)
+            bb.AlwaysOnTop = true
+            bb.StudsOffset = Vector3.new(0, 3, 0)
+            bb.Parent = hrp
+
+            local txt = Instance.new("TextLabel")
+            txt.Size = UDim2.new(1, 0, 1, 0)
+            txt.BackgroundTransparency = 1
+            txt.TextColor3 = Color3.fromRGB(255, 255, 255)
+            txt.TextStrokeTransparency = 0
+            txt.Font = Enum.Font.GothamBold
+            txt.TextSize = 12
+            txt.Text = player.DisplayName .. " [" .. math.floor(hum.Health) .. "/" .. math.floor(hum.MaxHealth) .. " HP]"
+            txt.Parent = bb
+
+            hum.HealthChanged:Connect(function(newHp)
+                txt.Text = player.DisplayName .. " [" .. math.floor(newHp) .. "/" .. math.floor(hum.MaxHealth) .. " HP]"
+            end)
+        end
+    end
+
+    if player.Character then
+        applyHighlight(player.Character)
+    end
+    player.CharacterAdded:Connect(applyHighlight)
+end
+
+createToggle(TabUtility, "Player ESP (Shows HP & Fixed)", function(state)
+    espEnabled = state
+    notifyToggle("Player ESP", state)
+    
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer then
+            if state then
+                addESP(p)
+            else
+                if p.Character then
+                    if p.Character:FindFirstChild("WhoopESP") then
+                        p.Character.WhoopESP:Destroy()
+                    end
+                    local hrp = p.Character:FindFirstChild("HumanoidRootPart")
+                    if hrp and hrp:FindFirstChild("WhoopHealthTag") then
+                        hrp.WhoopHealthTag:Destroy()
+                    end
+                end
+            end
+        end
+    end
+end)
+
+Players.PlayerAdded:Connect(function(p)
+    if espEnabled then
+        addESP(p)
+    end
+end)
+
+-- 4. INFINITE JUMP
+local infJumpEnabled = false
+UserInputService.JumpRequest:Connect(function()
+    if infJumpEnabled and LocalPlayer.Character then
+        local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum then
+            hum:ChangeState(Enum.HumanoidStateType.Jumping)
+        end
+    end
+end)
+
+createToggle(TabUtility, "Infinite Jump", function(state)
+    infJumpEnabled = state
+    notifyToggle("Infinite Jump", state)
+end)
+
+-- 5. TELEPORT TO LAST DEATH POSITION
+local TpDeathBtn = Instance.new("TextButton")
+TpDeathBtn.Size = UDim2.new(1, -10, 0, 40)
+TpDeathBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TpDeathBtn.Text = "💀 Teleport to Last Death Location"
+TpDeathBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+TpDeathBtn.Font = Enum.Font.GothamBold
+TpDeathBtn.TextSize = 12
+TpDeathBtn.Parent = TabUtility
+
+Instance.new("UICorner", TpDeathBtn).CornerRadius = UDim.new(0, 6)
+
+TpDeathBtn.MouseButton1Click:Connect(function()
+    if lastDeathPosition and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        LocalPlayer.Character.HumanoidRootPart.CFrame = lastDeathPosition
+        sendChatNotification("RESPECTED Ucenucunacan13; Teleported to Last Death Position!")
+    else
+        sendChatNotification("RESPECTFUL; No Death Position Saved Yet!")
+    end
+end)
+
+-- 6. TELEPORT TO OTHER PLAYERS (PLAYER SELECTOR)
+local TpPlayerFrame = Instance.new("Frame")
+TpPlayerFrame.Size = UDim2.new(1, -10, 0, 75)
+TpPlayerFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TpPlayerFrame.Parent = TabUtility
+Instance.new("UICorner", TpPlayerFrame).CornerRadius = UDim.new(0, 6)
+
+local selectedPlayerIndex = 1
+local TargetPlayerLabel = Instance.new("TextLabel")
+TargetPlayerLabel.Size = UDim2.new(1, -20, 0, 25)
+TargetPlayerLabel.Position = UDim2.new(0, 10, 0, 5)
+TargetPlayerLabel.BackgroundTransparency = 1
+TargetPlayerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TargetPlayerLabel.TextSize = 12
+TargetPlayerLabel.Font = Enum.Font.GothamBold
+TargetPlayerLabel.Text = "Select Player: None"
+TargetPlayerLabel.Parent = TpPlayerFrame
+
+local CycleBtn = Instance.new("TextButton")
+CycleBtn.Size = UDim2.new(0, 120, 0, 30)
+CycleBtn.Position = UDim2.new(0, 10, 0, 35)
+CycleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+CycleBtn.Text = "🔄 Next Player"
+CycleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CycleBtn.Font = Enum.Font.GothamMedium
+CycleBtn.TextSize = 11
+CycleBtn.Parent = TpPlayerFrame
+Instance.new("UICorner", CycleBtn).CornerRadius = UDim.new(0, 4)
+
+local TpExecuteBtn = Instance.new("TextButton")
+TpExecuteBtn.Size = UDim2.new(0, 130, 0, 30)
+TpExecuteBtn.Position = UDim2.new(1, -140, 0, 35)
+TpExecuteBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TpExecuteBtn.Text = "🚀 Teleport To Player"
+TpExecuteBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+TpExecuteBtn.Font = Enum.Font.GothamBold
+TpExecuteBtn.TextSize = 11
+TpExecuteBtn.Parent = TpPlayerFrame
+Instance.new("UICorner", TpExecuteBtn).CornerRadius = UDim.new(0, 4)
+
+local function getOtherPlayers()
+    local list = {}
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer then
+            table.insert(list, p)
+        end
+    end
+    return list
+end
+
+CycleBtn.MouseButton1Click:Connect(function()
+    local others = getOtherPlayers()
+    if #others == 0 then
+        TargetPlayerLabel.Text = "Select Player: No Other Players Found"
+        return
+    end
+    selectedPlayerIndex = selectedPlayerIndex + 1
+    if selectedPlayerIndex > #others then
+        selectedPlayerIndex = 1
+    end
+    local p = others[selectedPlayerIndex]
+    TargetPlayerLabel.Text = "Select Player: " .. p.DisplayName .. " (@" .. p.Name .. ")"
+end)
+
+TpExecuteBtn.MouseButton1Click:Connect(function()
+    local others = getOtherPlayers()
+    if #others > 0 and others[selectedPlayerIndex] then
+        local targetP = others[selectedPlayerIndex]
+        if targetP.Character and targetP.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            LocalPlayer.Character.HumanoidRootPart.CFrame = targetP.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -3)
+            sendChatNotification("RESPECTFUL; Teleported to " .. targetP.DisplayName)
+        end
+    end
+end)
